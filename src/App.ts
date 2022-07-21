@@ -59,7 +59,7 @@ export class App {
     const fontLoader = new FontLoader();
     fontLoader.load("fonts/optimer_bold.typeface.json", (font) => {
       const geometry = new TextGeometry(
-        "Andry\nSafidy\nTsiory\nLyda\nBrillant",
+        "Sayuri\nAndry\nSafidy\nTsiory\nLyda\nBrillant",
         {
           font,
           size: 0.4,

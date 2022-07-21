@@ -58,17 +58,20 @@ export class App {
 
     const fontLoader = new FontLoader();
     fontLoader.load("fonts/optimer_bold.typeface.json", (font) => {
-      const geometry = new TextGeometry("Andry\nSafidy\nLyda\nBrillant", {
-        font,
-        size: 0.4,
-        height: 0.1,
-        bevelEnabled: true,
-        curveSegments: 5,
-        bevelThickness: 0.05,
-        bevelOffset: 0,
-        bevelSegments: 5,
-        bevelSize: 0.02,
-      });
+      const geometry = new TextGeometry(
+        "Andry\nSafidy\nTsiory\nLyda\nBrillant",
+        {
+          font,
+          size: 0.4,
+          height: 0.1,
+          bevelEnabled: true,
+          curveSegments: 5,
+          bevelThickness: 0.05,
+          bevelOffset: 0,
+          bevelSegments: 5,
+          bevelSize: 0.02,
+        }
+      );
       geometry.center();
       const material = new MeshMatcapMaterial({ matcap: this.texture });
       this.texture.wrapS = RepeatWrapping;

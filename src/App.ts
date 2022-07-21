@@ -1,12 +1,17 @@
 import THREE, {
   AxesHelper,
   BoxGeometry,
+  FontLoader,
   Mesh,
   MeshBasicMaterial,
+  MeshMatcapMaterial,
   PerspectiveCamera,
+  RepeatWrapping,
   Scene,
+  TextGeometry,
   Texture,
   TextureLoader,
+  TorusGeometry,
   WebGLRenderer,
 } from "three";
 
@@ -44,13 +49,33 @@ export class App {
     const axisHelper = new AxesHelper(2);
     this.scene.add(axisHelper);
 
-    this.texture = new TextureLoader().load("images/textures/crate.gif");
+    this.texture = new TextureLoader().load(
+      "images/textures/mat-cap-libigl.png"
+    );
 
     const geometry = new BoxGeometry(1, 1, 1);
-    this.material = new MeshBasicMaterial({
-      color: 0xffeedd,
-      wireframe: false,
-      map: this.texture,
+    this.material = new MeshBasicMaterial({ map: this.texture });
+
+    const fontLoader = new FontLoader();
+    fontLoader.load("fonts/optimer_bold.typeface.json", (font) => {
+      const geometry = new TextGeometry("Andry\nSafidy\nLyda\nBrillant", {
+        font,
+        size: 0.4,
+        height: 0.1,
+        bevelEnabled: true,
+        curveSegments: 5,
+        bevelThickness: 0.05,
+        bevelOffset: 0,
+        bevelSegments: 5,
+        bevelSize: 0.02,
+      });
+      geometry.center();
+      const material = new MeshMatcapMaterial({ matcap: this.texture });
+      this.texture.wrapS = RepeatWrapping;
+      // this.debug.add(material, "wireframe");
+
+      const text = new Mesh(geometry, material);
+      this.scene.add(text);
     });
 
     this.debug = new GUI();
@@ -71,7 +96,7 @@ export class App {
 
     this.mesh = new Mesh(geometry, this.material);
     this.mesh.rotation.reorder("YXZ");
-    this.scene.add(this.mesh);
+    // this.scene.add(this.mesh);
 
     this.renderer = new WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setClearColor(0x000000, 0); // the default
@@ -107,36 +132,30 @@ export class App {
     this.mesh.position.set(1, 0, 0);
     this.orbitCtrl.enableDamping = true;
 
-    this.debug
-      .add(this.mesh.position, "x")
-      .name("X position")
-      .min(-3)
-      .max(3)
-      .step(0.1);
-    this.debug
-      .add(this.mesh.position, "y")
-      .name("Y position")
-      .min(-3)
-      .max(3)
-      .step(0.1);
-    this.debug
-      .add(this.mesh.position, "z")
-      .name("Z position")
-      .min(-3)
-      .max(3)
-      .step(0.1);
-    this.debug.addColor(this.material, "color").name("Mesh color");
-    this.debug.add(this.material, "wireframe").name("Wireframe");
-    this.debug
-      .add(this.debugParams, "texture", ["Color only", "Box texture"])
-      .name("Texture")
-      .onChange(() => {
-        if (this.debugParams.texture === "Box texture") {
-          console.log("Box texture");
-        } else if (this.debugParams.texture === "Color only") {
-          console.log("Color only");
-        }
-      });
+    const geometry = new TorusGeometry(0.5, 0.3, 20, 20);
+    const material = new MeshMatcapMaterial({ matcap: this.texture });
+
+    for (let i = 0; i < 100; i++) {
+      const mesh = new Mesh(geometry, material);
+      mesh.position.x = (Math.random() - 0.5) * 15;
+      mesh.position.y = (Math.random() - 0.5) * 15;
+      mesh.position.z = (Math.random() - 0.5) * 15;
+      mesh.rotation.x = Math.random() * Math.PI * 0.5;
+      mesh.rotation.y = Math.random() * Math.PI * 0.5;
+      this.scene.add(mesh);
+    }
+
+    for (let i = 0; i < 1000; i++) {
+      const mesh = new Mesh(geometry, material);
+      mesh.position.x = (Math.random() - 0.5) * 50;
+      mesh.position.y = (Math.random() - 0.5) * 50;
+      mesh.position.z = (Math.random() - 0.5) * 50;
+      mesh.rotation.x = Math.random() * Math.PI * 0.5;
+      mesh.rotation.y = Math.random() * Math.PI * 0.5;
+      this.scene.add(mesh);
+    }
+    this.orbitCtrl.autoRotate = true;
+    this.orbitCtrl.autoRotateSpeed = 0.8;
   }
 
   private render(): void {
@@ -144,8 +163,7 @@ export class App {
       this.debug.domElement.style.opacity = "1";
     }
     this.orbitCtrl.update();
-    this.camera.lookAt(this.mesh.position);
-    this.mesh.rotation.y += 0.01;
+    // this.camera.lookAt(this.mesh.position);
   }
 }
 
